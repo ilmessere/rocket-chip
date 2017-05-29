@@ -1,7 +1,8 @@
 bootrom_img = bootrom.img
 
-GCC=riscv64-unknown-elf-gcc
-OBJCOPY=riscv64-unknown-elf-objcopy
+ARCH=riscv32-unknown-elf
+GCC=$(ARCH)-gcc
+OBJCOPY=$(ARCH)-objcopy
 
 all: $(bootrom_img)
 
