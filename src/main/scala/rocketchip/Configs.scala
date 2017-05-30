@@ -80,6 +80,7 @@ class DualChannelDualBankL2Config extends Config(
 class RoccExampleConfig extends Config(new WithRoccExample ++ new DefaultConfig)
 // 32 bit core = RoCC
 class RV32RoccConfig extends Config(new WithRoccExample ++ new DefaultRV32Config)
+class CustomRV32RoccConfig extends Config(new WithRoccAccum ++ new DefaultRV32Config)
 
 class Edge128BitConfig extends Config(
   new WithEdgeDataBits(128) ++ new BaseConfig)
