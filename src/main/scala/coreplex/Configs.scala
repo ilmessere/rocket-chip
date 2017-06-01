@@ -180,6 +180,16 @@ class WithRoccExample extends Config((site, here, up) => {
   case RoccMaxTaggedMemXacts => 1
 })
 
+class WithRoccBlackBox extends Config((site, here, up) => {
+  case RocketTilesKey => up(RocketTilesKey, site) map { r =>
+    r.copy(rocc = Seq(
+      RoCCParams(
+        opcodes = OpcodeSet.custom0,
+        generator = (p: Parameters) => Module(new CoprocessorExample()(p)))))
+  }
+  case RoccMaxTaggedMemXacts => 1
+})
+
 class WithRoccAccum extends Config((site, here, up) => {
   case RocketTilesKey => up(RocketTilesKey, site) map { r =>
     r.copy(rocc = Seq(
