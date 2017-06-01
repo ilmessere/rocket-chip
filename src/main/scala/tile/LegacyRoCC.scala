@@ -208,75 +208,25 @@ class RoCCIO(implicit p: Parameters) extends RoCCCoreIO()(p) {
 
 abstract class RoCC(implicit p: Parameters) extends CoreModule()(p) {
   val io = new RoCCIO
-  io.mem.req.bits.phys := Bool(true) // don't perform address translation
-  io.mem.invalidate_lr := Bool(false) // don't mess with LR/SC
+  //io.mem.req.bits.phys := Bool(true) // don't perform address translation
+  //io.mem.invalidate_lr := Bool(false) // don't mess with LR/SC
 }
 
 class Coprocessor(implicit p: Parameters) extends BlackBox {
-  val io = IO(new RoCCIO()(p))
+  val io = new Bundle{
+    val clock = Clock(INPUT)
+    val reset = Bool(INPUT)
+    val io = new RoCCIO()(p)
+  }
+  def connect(clk : Clock, rst : Bool, rocc : RoCCIO) = {
+    io.clock := clk
+    io.reset := rst
+    rocc <>  io.io
+  }
 }
 
 class CoprocessorExample(implicit p: Parameters) extends RoCC()(p){
-  val box = Module(new Coprocessor()(p))
-
-
-  //*************************************************
-  //                    Inputs                     
-  //*************************************************
-
-  // cmd 
-  box.io.cmd.valid := io.cmd.valid
-  box.io.cmd.bits := io.cmd.bits
-  // resp ready
-  box.io.resp.ready := io.resp.ready
-  // mem req ready
-  box.io.mem.req.ready := io.mem.req.ready
-  // mem resp 
-  box.io.mem.resp := io.mem.resp
-  // exception
-  box.io.exception := io.exception
-  // autl acquire ready
-  box.io.autl.acquire.ready := io.autl.acquire.ready
-  // autl grant 
-  box.io.autl.grant.valid := io.autl.grant.valid
-  box.io.autl.grant.bits := io.autl.grant.bits
-  // fpu_req valid
-  box.io.fpu_req.ready := io.fpu_req.ready
-  // fpu_resp
-  box.io.fpu_resp.valid := io.fpu_resp.valid
-  box.io.fpu_resp.bits := io.fpu_resp.bits
-
-  //*************************************************
-  //                    Outputs                    
-  //*************************************************
-
-  // cmd ready
-  io.cmd.ready := box.io.cmd.ready
-  // resp
-  io.resp.valid := box.io.resp.valid
-  io.resp.bits := box.io.resp.bits
-  // mem request
-  io.mem.req.valid := box.io.mem.req.valid
-  io.mem.req.bits := box.io.mem.req.bits
-  // busy
-  io.busy := box.io.busy
-  // interrupt
-  io.interrupt := box.io.interrupt
-  // autl acquire
-  io.autl.acquire.valid := box.io.autl.acquire.valid
-  io.autl.acquire.bits := box.io.autl.acquire.bits
-  // autl grant ready
-  io.autl.grant.ready := box.io.autl.grant.ready
-  // fpu_req
-  io.fpu_req.valid := box.io.fpu_req.valid
-  io.fpu_req.bits := box.io.fpu_req.bits
-  // fpu_resp
-  io.fpu_resp.ready := box.io.fpu_resp.ready
-  
-
-
-  // Bulk connection not working
-  // io <> box.io
+  val box = Module(new Coprocessor()(p)).connect(clock, reset, io)
 }
 
 class AccumulatorExample(n: Int = 4)(implicit p: Parameters) extends RoCC()(p) {
