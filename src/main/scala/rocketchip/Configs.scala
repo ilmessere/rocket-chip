@@ -78,7 +78,9 @@ class DualChannelDualBankL2Config extends Config(
   new WithL2Cache ++ new BaseConfig)
 
 class RoccExampleConfig extends Config(new WithRoccExample ++ new DefaultConfig)
-// 32 bit core = RoCC
+class AccumulatorExampleRV64Config extends Config(new WithRoccAccum ++ new DefaultConfig)
+
+// 32 bit core + RoCC
 class RoccExampleRV32Config extends Config(new WithRoccExample ++ new DefaultRV32Config)
 class AccumulatorExampleRV32Config extends Config(new WithRoccAccum ++ new DefaultRV32Config)
 class BlackBoxRoccRV32Config extends Config(new WithRoccBlackBox ++ new DefaultRV32Config)
@@ -180,3 +182,7 @@ class WithTimebase(hertz: BigInt) extends Config((site, here, up) => {
 })
 
 class DefaultFPGASmallConfig extends Config(new WithNSmallCores(1) ++ new DefaultFPGAConfig)
+
+class RoCCBlackBoxFPGASmallConfig extends Config(new WithRoccBlackBox ++ new WithNSmallCores(1) ++ new DefaultFPGAConfig)
+
+class RoCCAccumFPGASmallConfig extends Config(new WithRoccAccum ++ new WithNSmallCores(1) ++ new DefaultFPGAConfig)
